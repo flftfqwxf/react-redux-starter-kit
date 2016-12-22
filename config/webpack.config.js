@@ -62,7 +62,7 @@ webpackConfig.plugins = [
     filename : 'index.html',
     inject   : 'body',
     minify   : {
-      collapseWhitespace : true
+      collapseWhitespace : false//是否压缩输出的HTML
     }
   })
 ]
