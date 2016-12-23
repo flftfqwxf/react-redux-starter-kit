@@ -17,8 +17,11 @@ function route(req, res) {
     }
     const type = types[ext];
     switch (type) {
-        case "text/html":
+        case "text/html", undefined:
             indexPath = './views' + pathname;
+            break;
+        case 'application/json':
+            indexPath = './data' + pathname;
             break;
         default:
             indexPath = './assets' + pathname;
