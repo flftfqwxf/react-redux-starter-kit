@@ -1,2 +1,3 @@
-const router = require('./route');
-router();
+const config = require('./config');
+const index = require('./core/index');
+index(config);
