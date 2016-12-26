@@ -1,0 +1,33 @@
+{
+  "data": [
+    {
+      "key": "1",
+      "name": "物联安全-web"
+    },
+    {
+      "key": "1",
+      "name": "http://192.168.28.218"
+    },
+    {
+      "key": "1",
+      "name": "asdf"
+    }
+  ],
+  "header": [
+    {
+      "title": "项目名称",
+      "dataIndex": "name",
+      "key": "name",
+    },
+    {
+      "title": "代理前缀",
+      "dataIndex": "age",
+      "key": "age",
+    },
+    {
+      "title": "操作",
+      "dataIndex": "address",
+      "key": "address",
+    }
+  ]
+}

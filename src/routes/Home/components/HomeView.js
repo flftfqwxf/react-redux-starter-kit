@@ -1,15 +1,45 @@
 import React from 'react'
-import DuckImage from '../assets/Duck.jpg'
+import {Table} from 'antd'
 import './HomeView.scss'
-
+const dataSource = [{
+    key: '1',
+    name: '胡彦斌',
+    age: 32,
+    address: '西湖区湖底公园1号'
+}, {
+    key: '2',
+    name: '胡彦祖',
+    age: 42,
+    address: '西湖区湖底公园1号'
+}];
+const columns = [{
+    title: '姓名',
+    dataIndex: 'name',
+    key: 'name',
+}, {
+    title: '年龄',
+    dataIndex: 'age',
+    key: 'age',
+}, {
+    title: '住址',
+    dataIndex: 'address',
+    key: 'address',
+}];
 export const HomeView = () => (
-  <div>
-    <h4>Welcome!</h4>
-    <img
-      alt='This is a duck, because Redux!'
-      className='duck'
-      src={DuckImage} />
-  </div>
+    <div className="row">
+        <div className="col-md-12">
+            <div className="item">
+                <div className="item-head clearfix">
+                    <h4 className="pull-left">项目列表</h4>
+                    <span style={{paddingRight: '20px', float: 'right'}}>
+                            <a className="btn btn-info" href="/home2/project/add.html">添加项目</a>
+                                                        </span>
+                </div>
+                <div className="item-main">
+                    <Table dataSource={dataSource} columns={columns}/>
+                </div>
+            </div>
+        </div>
+    </div>
 )
-
 export default HomeView
