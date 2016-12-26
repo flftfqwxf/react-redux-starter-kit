@@ -1,5 +1,5 @@
 module.exports = {
-    route: {
+    routes: {
         '/home': 'home.html',
         '/': 'index.html'
     }

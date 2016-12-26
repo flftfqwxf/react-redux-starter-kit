@@ -2,22 +2,25 @@ const url = require('url');
 const log = require('gutil-color-log');
 const path = require('path');
 const types = require('./mimetype').types;
-const routerConfig = {
-    '/': './views/index.html',
-}
+// const routes = require('../router').routes;
+
 function route(req, res) {
     let indexPath;
     let pathname = url.parse(req.url).pathname;
+    let route = routes[pathname];
+    if (route) {
+        pathname = route;
+    }
     let ext = path.extname(pathname)
     if (ext) {
         ext = ext.slice(1)
     } else {
         ext = '';
-        pathname += '/index.html';
+        pathname += 'index.html';
     }
     const type = types[ext];
     switch (type) {
-        case "text/html", undefined:
+        case "text/html":
             indexPath = './views' + pathname;
             break;
         case 'application/json':
