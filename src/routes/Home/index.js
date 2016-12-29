@@ -7,13 +7,13 @@ export default (store)=>({
         require.ensure([], (require) => {
             /*  Webpack - use require callback to define
              dependencies for bundling   */
-            const Counter = require('./components/HomeView').default
+            const Home = require('./containers/HomeContainer').default
             const reducer = require('./modules/home').default
             /*  Add the reducer to the store on key 'counter'  */
             injectReducer(store, {key: 'project', reducer})
             /*  Return getComponent   */
-            cb(null, Counter)
+            cb(null, Home)
             /* Webpack named bundle   */
-        }, 'counter')
+        }, 'home')
     }
 })

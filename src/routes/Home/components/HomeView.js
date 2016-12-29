@@ -39,7 +39,7 @@ class HomeView extends React.Component {
         //     address: '西湖区湖底公园1号'
         // }];
         super(props);
-        this.state = {project: dataSource};
+        // this.state = {project: dataSource};
     }
 
     render() {
@@ -54,13 +54,21 @@ class HomeView extends React.Component {
                                                         </span>
                         </div>
                         <div className="item-main">
-                            <Table dataSource={this.props.project} columns={columns}/>
+                            {/*<Table dataSource={this.props.project} columns={columns}/>*/}
                         </div>
                     </div>
                 </div>
             </div>
         )
     }
+
+    componentWillMount() {
+        this.props.loadProjectList();
+    }
+}
+HomeView.propTypes = {
+    loadProjectList: React.PropTypes.func.isRequired,
+    increment: React.PropTypes.func.isRequired
 }
 HomeView.defaultProps = {
     project: dataSource
