@@ -1,30 +1,6 @@
 import React from 'react'
 import {Table} from 'antd'
 import './HomeView.scss'
-const dataSource = [{
-    key: '1',
-    name: '胡彦斌',
-    age: 32,
-    address: '西湖区湖底公园1号'
-}, {
-    key: '2',
-    name: '胡彦祖',
-    age: 42,
-    address: '西湖区湖底公园1号'
-}];
-const columns = [{
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
-}, {
-    title: '年龄',
-    dataIndex: 'age',
-    key: 'age',
-}, {
-    title: '住址',
-    dataIndex: 'address',
-    key: 'address',
-}];
 class HomeView extends React.Component {
     constructor(props) {
         // props.project = [{
@@ -39,6 +15,28 @@ class HomeView extends React.Component {
         //     address: '西湖区湖底公园1号'
         // }];
         super(props);
+        this.state = {
+            columns: [{
+                title: 'ID',
+                dataIndex: 'project_id',
+                key: 'project_id',
+            }, {
+                title: '项目名称',
+                dataIndex: 'project_name',
+                key: 'project_name',
+            }, {
+                title: '代理前缀',
+                dataIndex: 'proxy_url',
+                key: 'proxy_url',
+            },
+                {
+                    title: '状态',
+                    dataIndex: 'open_proxy',
+                    key: 'open_proxy',
+                },
+                {title: '操作', dataIndex: '', key: 'x', render: () => (<a href="javascript:;" onClick={this.props.delete}>删除</a>)},
+            ]
+        };
         // this.state = {project: dataSource};
     }
 
@@ -54,7 +52,7 @@ class HomeView extends React.Component {
                                                         </span>
                         </div>
                         <div className="item-main">
-                            {/*<Table dataSource={this.props.project} columns={columns}/>*/}
+                            <Table dataSource={this.props.project} columns={this.state.columns}/>
                         </div>
                     </div>
                 </div>
@@ -71,7 +69,11 @@ HomeView.propTypes = {
     increment: React.PropTypes.func.isRequired
 }
 HomeView.defaultProps = {
-    project: dataSource
+    columns: [],
+    // project: dataSource
+    delete: function() {
+        alert(2)
+    }
 }
 // HomeView.propTypes = {
 //     project:

@@ -6,7 +6,7 @@ export const LOAD_PROJECT_LIST = 'LOAD_PROJECT_LIST'
 // ------------------------------------
 // Actions
 // ------------------------------------
-export function increment(value = '') {
+export function increment(value = []) {
     return {
         type: LOAD_PROJECT_LIST,
         payload: value
@@ -23,7 +23,7 @@ export const loadProjectList = ()=> {
     return (dispatch, getState)=> {
         axios.get('/api/project/list').then((data)=> {
             if (data) {
-                dispatch(increment(data))
+                dispatch(increment(data.data))
             }
         })
     }
@@ -41,7 +41,7 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 // Reducer
 // ------------------------------------
-const initialState = 0
+const initialState = []
 export default function homeReducer(state = initialState, action) {
     const handler = ACTION_HANDLERS[action.type]
     return handler ? handler(state, action) : state
