@@ -5,33 +5,68 @@ const log = require('gutil-color-log');
 const types = require('./mimetype').types;
 const fs = require('fs');
 const routes = require('./route');
-function start(config, router) {
-    http.createServer(function(req, res) {
-        const pathname = url.parse(req.url).pathname;
-        const realPath = routes(req, router)
-        let ext = path.extname(pathname)
-        ext = ext ? ext.slice(1) : 'unknown';
-        const type = types[ext];
-        fs.exists(realPath, function(exists) {
-            if (!exists) {
-                res.writeHead(404, {"Content-Type": type || 'text/html'});
-                res.write('This is not found');
+class skyWeb {
+    constructor() {
+        this.getUrls = [];
+        this.getUrlsCallback = {};
+    }
+
+    listen(port, callback, host = '127.0.0.1') {
+        const _this = this;
+        let server = http.createServer((req, res)=> {
+            const pathname = url.parse(req.url).pathname;
+            if (this.getUrls.indexOf(pathname) !== -1) {
+                res.writeHead(200, {"Content-Type": 'text/html'});
+                this.getUrlsCallback[pathname](req, res);
                 res.end()
-            } else {
-                fs.readFile(realPath, function(err, data) {
-                    if (err) {
-                        res.writeHead(500, {"Content-Type": type || 'text/html'});
-                        res.end(err.toString())
-                    } else {
-                        res.writeHead(200, {"Content-Type": type || 'text/html'});
-                        res.write(data)
-                        res.end()
-                    }
-                })
+                return;
             }
+            const realPath = routes(req)
+            let ext = path.extname(pathname)
+            ext = ext ? ext.slice(1) : 'unknown';
+            const type = types[ext];
+            fs.exists(realPath, function(exists) {
+                if (!exists) {
+                    res.writeHead(404, {"Content-Type": type || 'text/html'});
+                    res.write('This is not found');
+                    res.end()
+                } else {
+                    fs.readFile(realPath, function(err, data) {
+                        if (err) {
+                            res.writeHead(500, {"Content-Type": type || 'text/html'});
+                            res.end(err.toString())
+                        } else {
+                            res.writeHead(200, {"Content-Type": type || 'text/html'});
+                            res.write(data)
+                            res.end()
+                        }
+                    })
+                }
+            })
         })
-    }).listen(6565);
-    log('green', 'server has started')
-    log('green', 'http://localhost:6565')
+        server.listen(port, host, function() {
+            log('green', 'server has started')
+            log('green', 'http://' + host + ':' + port)
+            callback();
+        });
+    }
+
+    set(key, val) {
+        this[key] = val;
+    }
+
+    get(url, callback) {
+        let urls = {};
+        urls[url] = callback;
+        this.getUrls.push(url);
+        this.getUrlsCallback[url] = callback;
+    }
+
+    // initRouter(){
+    //
+    // }
+    // use(obj){
+    //     this[]
+    // }
 }
-module.exports = start;
+module.exports = new skyWeb()

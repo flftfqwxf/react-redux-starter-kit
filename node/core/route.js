@@ -6,10 +6,13 @@ const types = require('./mimetype').types;
 function route(req, routes) {
     let indexPath;
     let pathname = url.parse(req.url).pathname;
-    let route = routes[pathname];
-    if (route) {
-        pathname = route;
-    }
+    // let route = routes[pathname];
+    // if (route && typeof route === 'string') {
+    //     pathname = route;
+    // }
+    // if (route && typeof route === 'function') {
+    //     pathname = route;
+    // }
     let ext = path.extname(pathname)
     if (ext) {
         ext = ext.slice(1)
