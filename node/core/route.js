@@ -3,8 +3,7 @@ const log = require('gutil-color-log');
 const path = require('path');
 const types = require('./mimetype').types;
 // const routes = require('../router').routes;
-
-function route(req, res) {
+function route(req, routes) {
     let indexPath;
     let pathname = url.parse(req.url).pathname;
     let route = routes[pathname];

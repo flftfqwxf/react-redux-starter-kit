@@ -5,10 +5,10 @@ const log = require('gutil-color-log');
 const types = require('./mimetype').types;
 const fs = require('fs');
 const routes = require('./route');
-function start() {
+function start(config, router) {
     http.createServer(function(req, res) {
         const pathname = url.parse(req.url).pathname;
-        const realPath = routes(req, res)
+        const realPath = routes(req, router)
         let ext = path.extname(pathname)
         ext = ext ? ext.slice(1) : 'unknown';
         const type = types[ext];

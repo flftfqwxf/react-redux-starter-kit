@@ -8,9 +8,9 @@ export default (store)=>({
             /*  Webpack - use require callback to define
              dependencies for bundling   */
             const Counter = require('./components/HomeView').default
-            // const reducer = require('./modules/counter').default
+            const reducer = require('./modules/home').default
             /*  Add the reducer to the store on key 'counter'  */
-            // injectReducer(store, {key: 'counter', reducer})
+            injectReducer(store, {key: 'project', reducer})
             /*  Return getComponent   */
             cb(null, Counter)
             /* Webpack named bundle   */
