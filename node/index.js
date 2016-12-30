@@ -11,8 +11,9 @@ skyWeb.get('/test', function(req, res) {
     const str = nunjucks.render('test.nunj')
     res.write(str);
 })
-skyWeb.get('/aaa', function(req, res) {
-    res.write('444');
+skyWeb.post('/aaa', function(req, res) {
+    const str = nunjucks.render('test.nunj')
+    res.write(str);
 })
 skyWeb.listen(3655, function() {
     console.log('server is start');

@@ -5,19 +5,27 @@ const log = require('gutil-color-log');
 const types = require('./mimetype').types;
 const fs = require('fs');
 const routes = require('./route');
+const methods = require('methods');
 class skyWeb {
     constructor() {
-        this.getUrls = [];
-        this.getUrlsCallback = {};
+        this.methods = {};
+        this.routes = {};
+        methods.forEach((item)=> {
+            this.routes[item] = {}
+            this[item] = (url, callback) => {
+                this.routes[item][url] = callback;
+            }
+        })
     }
 
     listen(port, callback, host = '127.0.0.1') {
         const _this = this;
         let server = http.createServer((req, res)=> {
             const pathname = url.parse(req.url).pathname;
-            if (this.getUrls.indexOf(pathname) !== -1) {
+            const callback = this.routes[req.method.toLowerCase()][pathname];
+            if (callback) {
                 res.writeHead(200, {"Content-Type": 'text/html'});
-                this.getUrlsCallback[pathname](req, res);
+                callback(req, res);
                 res.end()
                 return;
             }
@@ -55,13 +63,6 @@ class skyWeb {
         this[key] = val;
     }
 
-    get(url, callback) {
-        let urls = {};
-        urls[url] = callback;
-        this.getUrls.push(url);
-        this.getUrlsCallback[url] = callback;
-    }
-
     // initRouter(){
     //
     // }
@@ -69,4 +70,5 @@ class skyWeb {
     //     this[]
     // }
 }
+skyWeb
 module.exports = new skyWeb()
