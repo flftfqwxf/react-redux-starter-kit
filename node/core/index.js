@@ -23,16 +23,15 @@ class skyWeb {
         let server = http.createServer((req, res)=> {
             const pathname = url.parse(req.url).pathname;
             const callback = this.routes[req.method.toLowerCase()][pathname];
-            if (callback) {
-                res.writeHead(200, {"Content-Type": 'text/html'});
-                callback(req, res);
-                res.end()
-                return;
-            }
             const realPath = routes(req)
             let ext = path.extname(pathname)
             ext = ext ? ext.slice(1) : 'unknown';
             const type = types[ext];
+            if (callback) {
+                res.writeHead(200, {"Content-Type": type || 'text/html'});
+                callback(req, res);
+                return;
+            }
             fs.exists(realPath, function(exists) {
                 if (!exists) {
                     res.writeHead(404, {"Content-Type": type || 'text/html'});
@@ -70,5 +69,4 @@ class skyWeb {
     //     this[]
     // }
 }
-skyWeb
 module.exports = new skyWeb()
