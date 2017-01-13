@@ -39,8 +39,7 @@ class HomeView extends React.Component {
                     render: text => {
                         return text === 1 ? '开启' : '关闭'
                     }
-                }
-                ,
+                },
                 {
                     title: '操作', dataIndex: '', render: (item) => {
                     return (
