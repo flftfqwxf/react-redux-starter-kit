@@ -21,14 +21,17 @@ skyWeb.post('/aaa', function(req, res) {
     res.end();
 })
 skyWeb.get('/web/project_list', function(req, res) {
-    res.writeHead(200, {"Content-Type": types['json']});
+    // res.writeHead(200, {"Content-Type": types['json']});
     pool.query('select * from mock_project').then(
         (data)=> {
             const json = JSON.stringify(data);
             res.write(json);
             res.end();
         }
-    )
+    ).catch((err)=> {
+        res.write(err.message);
+        res.end();
+    })
 })
 skyWeb.listen(3655, function() {
     console.log('server is start');

@@ -1,0 +1,15 @@
+{
+  "name": "sm-node",
+  "version": "1.0.0",
+  "description": "smipile node web lib",
+  "main": "index.js",
+  "scripts": {
+    "dev": "  node-dev $NODE_DEBUG_OPTION index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "flftfqwxf",
+  "license": "MIT"
+}
