@@ -19,23 +19,24 @@ export function increment(value = []) {
  NOTE: This is solely for demonstration purposes. In a real application,
  you'd probably want to dispatch an action of COUNTER_DOUBLE and let the
  reducer take care of this logic.  */
-export const loadProjectInfo = ()=> {
-    return (dispatch, getState)=> {
-        axios.get('/api/project/list').then((data)=> {
+export const loadProjectInfo = (projectId)=> {
+    return (dispatch)=> {
+        axios.get('/web/project/info', {projectId: projectId}).then((data)=> {
             if (data) {
                 dispatch(increment(data.data))
             }
         })
     }
 }
-export const addProjectInfo=()=>{
-    return (dispatch)=>{
-        axios.post()
+export const addProjectInfo = ()=> {
+    return (dispatch)=> {
+        // axios.post()
     }
 }
 export const actions = {
     increment,
-    loadProjectInfo
+    loadProjectInfo,
+    addProjectInfo
 }
 // ------------------------------------
 // Action Handlers
@@ -47,7 +48,7 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = []
-export default function homeReducer(state = initialState, action) {
+export default function addProjectReducer(state = initialState, action) {
     const handler = ACTION_HANDLERS[action.type]
     return handler ? handler(state, action) : state
 }

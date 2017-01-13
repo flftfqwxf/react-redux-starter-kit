@@ -13,7 +13,7 @@ const mapDispatchToProps = {
     loadProjectList
 }
 const mapStateToProps = (state) => ({
-    project: state.project
+    projectList: state.projectList
 })
 /*  Note: mapStateToProps is where you should use `reselect` to create selectors, ie:
 

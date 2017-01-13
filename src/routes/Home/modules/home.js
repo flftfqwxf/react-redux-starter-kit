@@ -21,7 +21,7 @@ export function increment(value = []) {
  reducer take care of this logic.  */
 export const loadProjectList = ()=> {
     return (dispatch, getState)=> {
-        axios.get('/api/project/list').then((data)=> {
+        axios.get('/web/project_list').then((data)=> {
             if (data) {
                 dispatch(increment(data.data))
             }

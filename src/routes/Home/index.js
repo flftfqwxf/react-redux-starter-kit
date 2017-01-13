@@ -10,7 +10,7 @@ export default (store)=>({
             const Home = require('./containers/HomeContainer').default
             const reducer = require('./modules/home').default
             /*  Add the reducer to the store on key 'counter'  */
-            injectReducer(store, {key: 'project', reducer})
+            injectReducer(store, {key: 'projectList', reducer})
             /*  Return getComponent   */
             cb(null, Home)
             /* Webpack named bundle   */

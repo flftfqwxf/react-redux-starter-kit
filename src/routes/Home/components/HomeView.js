@@ -2,7 +2,6 @@ import React from 'react'
 import {Table} from 'antd'
 import './HomeView.scss'
 import {IndexLink, Link} from 'react-router'
-
 class HomeView extends React.Component {
     constructor(props) {
         // props.project = [{
@@ -18,19 +17,21 @@ class HomeView extends React.Component {
         // }];
         super(props);
         this.state = {
-            columns: [{
-                title: 'ID',
-                dataIndex: 'project_id',
-                key: 'project_id',
-            }, {
-                title: '项目名称',
-                dataIndex: 'project_name',
-                key: 'project_name',
-            }, {
-                title: '代理前缀',
-                dataIndex: 'proxy_url',
-                key: 'proxy_url',
-            },
+            columns: [
+                {
+                    title: 'ID',
+                    dataIndex: 'project_id',
+                    key: 'project_id',
+                },
+                {
+                    title: '项目名称',
+                    dataIndex: 'project_name',
+                    key: 'project_name',
+                }, {
+                    title: '代理前缀',
+                    dataIndex: 'proxy_url',
+                    key: 'proxy_url',
+                },
                 {
                     title: '状态',
                     dataIndex: 'open_proxy',
@@ -41,11 +42,13 @@ class HomeView extends React.Component {
                 }
                 ,
                 {
-                    title: '操作', dataIndex: '', key: 'x', render: () => {
+                    title: '操作', dataIndex: '', render: (item) => {
                     return (
                         <span>
                             <a href="javascript:;" onClick={this.props.delete}>删除</a>&nbsp;
-                            <a href="javascript:;" onClick={this.props.edit}>修改</a>&nbsp;
+                            <Link to={{pathname: '/project/edit/' + item.project_id}} activeClassName='route--active'>
+                                    修改
+                                </Link>&nbsp;
                             <a href="javascript:;" onClick={this.props.copy}>复制</a>&nbsp;
                             <a href="javascript:;" onClick={this.props.show}>查看接口</a>
                         </span>
@@ -71,7 +74,7 @@ class HomeView extends React.Component {
                            </span>
                         </div>
                         <div className="item-main">
-                            <Table rowKey="project_id" dataSource={this.props.project} columns={this.state.columns}/>
+                            <Table rowKey="project_id" dataSource={this.props.projectList} columns={this.state.columns}/>
                         </div>
                     </div>
                 </div>

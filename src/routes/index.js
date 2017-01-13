@@ -1,6 +1,7 @@
 // We only need to import the modules necessary for initial render
 import CoreLayout from '../layouts/CoreLayout/CoreLayout'
 import Home from './Home'
+import {addProject, editProject} from './Project/index'
 import Home2 from './Home2'
 import CounterRoute from './Counter'
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -8,7 +9,7 @@ import CounterRoute from './Counter'
 export const createRoutes = (store) => ({
     path: '/',
     component: CoreLayout,
-    indexRoute:Home(store),
+    indexRoute: Home(store),
     childRoutes: [
         CounterRoute(store),
         {
@@ -26,7 +27,9 @@ export const createRoutes = (store) => ({
                     /* Webpack named bundle   */
                 }, 'counter')
             }
-        }
+        },
+        addProject(store),
+        editProject(store)
     ]
 })
 /*  Note: childRoutes can be chunked or otherwise loaded programmatically
