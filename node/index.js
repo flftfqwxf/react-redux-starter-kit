@@ -1,6 +1,5 @@
 const config = require('./config');
 const skyWeb = require('./core/index');
-const router = require('./router');
 const nunjucks = require('nunjucks');
 const types = require('./core/mimetype').types;
 var mysql = require('promise-mysql');
@@ -19,6 +18,19 @@ skyWeb.post('/aaa', function(req, res) {
     const str = nunjucks.render('test.nunj')
     res.write(str);
     res.end();
+})
+skyWeb.get('/web/project/info/:id', function(req, res) {
+    // res.writeHead(200, {"Content-Type": types['json']});
+    pool.query('select * from mock_project where project_id=' + req.params.id).then(
+        (data)=> {
+            const json = JSON.stringify(data[0]);
+            res.write(json);
+            res.end();
+        }
+    ).catch((err)=> {
+        res.write(err.message);
+        res.end();
+    })
 })
 skyWeb.get('/web/project_list', function(req, res) {
     // res.writeHead(200, {"Content-Type": types['json']});

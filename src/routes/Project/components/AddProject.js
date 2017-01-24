@@ -105,11 +105,9 @@ class AddProject extends React.Component {
     }
 
     componentWillMount() {
-        if (this.props.location.query.project_id) {
-            
-          
+        if (this.props.params.project_id) {
+            this.props.loadProjectInfo(this.props.params.project_id);
         }
-        this.props.loadProjectInfo();
     }
 }
 AddProject.propTypes = {
