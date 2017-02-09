@@ -6,7 +6,7 @@ export const ADD_PROJECT = 'ADD_PROJECT'
 // ------------------------------------
 // Actions
 // ------------------------------------
-export function increment(value = []) {
+export function increment(value = {}) {
     return {
         type: ADD_PROJECT,
         project: value
@@ -28,15 +28,22 @@ export const loadProjectInfo = (projectId)=> {
         })
     }
 }
-export const addProjectInfo = ()=> {
+export const saveProjectInfo = (projectInfo)=> {
     return (dispatch)=> {
-        // axios.post()
+        let url = '/web/project/add'
+        if (projectInfo.project_id) {
+            url = '/web/project/update'
+        }
+        axios.post(url, projectInfo).then(()=> {
+            if (data) {
+                // dispatch(increment(data.data))
+            }
+        })
     }
 }
 export const actions = {
-    increment,
     loadProjectInfo,
-    addProjectInfo
+    saveProjectInfo
 }
 // ------------------------------------
 // Action Handlers
@@ -47,7 +54,7 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 // Reducer
 // ------------------------------------
-const initialState = []
+const initialState = {project_name: "ab33c", proxy_url: 'ddd'}
 export default function addProjectReducer(state = initialState, action) {
     const handler = ACTION_HANDLERS[action.type]
     return handler ? handler(state, action) : state
