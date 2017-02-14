@@ -1,5 +1,5 @@
 import React from 'react'
-import {Table} from 'antd'
+import {Table, message} from 'antd'
 import './AddProject.scss'
 import ProjectForm from './ProjectForm'
 class AddProject extends React.Component {
@@ -10,8 +10,13 @@ class AddProject extends React.Component {
 
     handleSubmit = (values) => {
         // Do something with the form values
-
-        this.props.saveProjectInfo(values);
+        this.props.saveProjectInfo(values, function(data) {
+            if (data.code === 200) {
+                message.info('修改成功');
+            } else {
+                message.info(data.msg);
+            }
+        });
         return false;
     }
 

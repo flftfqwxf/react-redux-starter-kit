@@ -9,6 +9,9 @@ const methods = require('methods');
 const request = require('./request');
 const response = require('./response');
 var pathToRegexp = require('path-to-regexp');
+var debug = require('debug')('sql');
+
+const qs = require('querystring');
 class skyWeb {
     constructor() {
         this.methods = {};
@@ -56,6 +59,7 @@ class skyWeb {
             const routeList = this.routes[req.method.toLowerCase()]
             let route
             let params = {};
+            _this.body = [];
             routeList.some((item, index)=> {
                 // console.log(route)
                 var m = item.regexp.exec(pathname);
@@ -70,7 +74,21 @@ class skyWeb {
                     }
                     this.params = params;
                     req.params = params;
-                    route = item
+                    route = item;
+                    // if (req.method !== 'GET') {
+                    //     var body = '';
+                    //     req.on('data', function(data) {
+                    //         body += data;
+                    //         // Too much POST data, kill the connection!
+                    //         // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+                    //         if (body.length > 1e6)
+                    //             req.connection.destroy();
+                    //     });
+                    //     req.on('end', function() {
+                    //         _this.body = qs.parse(body);
+                    //         // use post['blah'], etc.
+                    //     });
+                    // }
                     return true;
                 }
             })
@@ -80,7 +98,7 @@ class skyWeb {
             const type = types[ext];
             if (route && route.callback) {
                 res.writeHead(200, {"Content-Type": type || 'text/html'});
-                route.callback(Object.assign({}, req, request), res);
+                route.callback(req, res);
                 return;
             }
             fs.exists(realPath, function(exists) {

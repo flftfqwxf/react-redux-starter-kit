@@ -28,14 +28,15 @@ export const loadProjectInfo = (projectId)=> {
         })
     }
 }
-export const saveProjectInfo = (projectInfo)=> {
+export const saveProjectInfo = (projectInfo,callback)=> {
     return (dispatch)=> {
         let url = '/web/project/add'
-        if (projectInfo.project_id) {
+        if (projectInfo.get('project_id')) {
             url = '/web/project/update'
         }
-        axios.post(url, projectInfo).then(()=> {
-            if (data) {
+        axios.put(url, projectInfo).then((data)=> {
+            if (data && data.data) {
+                callback(data.data);
                 // dispatch(increment(data.data))
             }
         })
