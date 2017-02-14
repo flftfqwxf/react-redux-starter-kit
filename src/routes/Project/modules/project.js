@@ -54,7 +54,7 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 // Reducer
 // ------------------------------------
-const initialState = {project_name: "ab33c", proxy_url: 'ddd'}
+const initialState = {project_name: "", proxy_url: ''}
 export default function addProjectReducer(state = initialState, action) {
     const handler = ACTION_HANDLERS[action.type]
     return handler ? handler(state, action) : state
