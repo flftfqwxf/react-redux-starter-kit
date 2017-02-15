@@ -52,38 +52,25 @@ skyWeb.listen(3655, function() {
 })
 skyWeb.put('/web/project/update', function(req, res) {
     // res.writeHead(200, {"Content-Type": types['json']});
-    let body = '';
-    req.on('data', function(data) {
-        body += data;
-        // Too much POST data, kill the connection!
-        // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
-        if (body.length > 1e6) {
-            body = "";
-            res.writeHead(413, {'Content-Type': 'text/plain'}).end();
-            req.connection.destroy();
-        }
-    });
-    req.on('end', function() {
-        body = JSON.parse(body);
-        let sql = 'update mock_project set project_name="' + body.project_name + '",proxy_url="' + body.proxy_url + '"   where project_id=' + body.project_id;
-        debug(sql)
-        pool.query(sql).then(
-            (data)=> {
-                if (data.affectedRows > 0) {
-                    res.write(JSON.stringify({
-                        code: 200,
-                        msg: '修改成功'
-                    }));
-                }
-                res.end();
+    let body = JSON.parse(req.body);
+    let sql = 'update mock_project set project_name="' + body.project_name + '",proxy_url="' + body.proxy_url + '"   where project_id=' + body.project_id;
+    debug(sql)
+    pool.query(sql).then(
+        (data)=> {
+            if (data.affectedRows > 0) {
+                res.write(JSON.stringify({
+                    code: 200,
+                    msg: '修改成功'
+                }));
             }
-        ).catch((err)=> {
-            debug(err.message)
-            res.write(err.message);
             res.end();
-        })
-        // use post['blah'], etc.
-    });
+        }
+    ).catch((err)=> {
+        debug(err.message)
+        res.write(err.message);
+        res.end();
+    })
+    // use post['blah'], etc.
     // const project_id = req.body.project_id;
 })
 // index(config, router);

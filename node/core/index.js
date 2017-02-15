@@ -10,7 +10,6 @@ const request = require('./request');
 const response = require('./response');
 var pathToRegexp = require('path-to-regexp');
 var debug = require('debug')('sql');
-
 const qs = require('querystring');
 class skyWeb {
     constructor() {
@@ -60,9 +59,14 @@ class skyWeb {
             let route
             let params = {};
             _this.body = [];
+            let hasBody = false;
+            const realPath = routes(req)
+            let ext = path.extname(pathname)
+            ext = ext ? ext.slice(1) : 'unknown';
+            const type = types[ext];
             routeList.some((item, index)=> {
                 // console.log(route)
-                var m = item.regexp.exec(pathname);
+                let m = item.regexp.exec(pathname)
                 if (m) {
                     for (var i = 1; i < m.length; i++) {
                         var key = item.keys[i - 1];
@@ -75,50 +79,58 @@ class skyWeb {
                     this.params = params;
                     req.params = params;
                     route = item;
-                    // if (req.method !== 'GET') {
-                    //     var body = '';
-                    //     req.on('data', function(data) {
-                    //         body += data;
-                    //         // Too much POST data, kill the connection!
-                    //         // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
-                    //         if (body.length > 1e6)
-                    //             req.connection.destroy();
-                    //     });
-                    //     req.on('end', function() {
-                    //         _this.body = qs.parse(body);
-                    //         // use post['blah'], etc.
-                    //     });
-                    // }
+                    if (req.method === 'PUT' || req.method === 'POST') {
+                        hasBody = true;
+                        let body = '';
+                        req.on('data', function(data) {
+                            body += data;
+                            // Too much POST data, kill the connection!
+                            // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+                            if (body.length > 1e6)
+                                req.connection.destroy();
+                        });
+                        req.on('end', function() {
+                            // req.body = qs.parse(body);
+                            req.body = body;
+                            if (route && route.callback) {
+                                res.writeHead(200, {"Content-Type": type || 'text/html'});
+                                // req.__proto__ = request;
+                                route.callback(req, res);
+                                // route.callback(Object.assign({}, req, request), res);
+                            }
+                            // use post['blah'], etc.
+                        });
+                    }
                     return true;
                 }
             })
-            const realPath = routes(req)
-            let ext = path.extname(pathname)
-            ext = ext ? ext.slice(1) : 'unknown';
-            const type = types[ext];
-            if (route && route.callback) {
-                res.writeHead(200, {"Content-Type": type || 'text/html'});
-                route.callback(req, res);
-                return;
-            }
-            fs.exists(realPath, function(exists) {
-                if (!exists) {
-                    res.writeHead(404, {"Content-Type": type || 'text/html'});
-                    res.write('This is not found');
-                    res.end()
-                } else {
-                    fs.readFile(realPath, function(err, data) {
-                        if (err) {
-                            res.writeHead(500, {"Content-Type": type || 'text/html'});
-                            res.end(err.toString())
-                        } else {
-                            res.writeHead(200, {"Content-Type": type || 'text/html'});
-                            res.write(data)
-                            res.end()
-                        }
-                    })
+            if (!hasBody) {
+                if (route && route.callback) {
+                    res.writeHead(200, {"Content-Type": type || 'text/html'});
+                    req.__proto__ = request;
+                    route.callback(req, res);
+                    // route.callback(Object.assign({}, req, request), res);
+                    return;
                 }
-            })
+                fs.exists(realPath, function(exists) {
+                    if (!exists) {
+                        res.writeHead(404, {"Content-Type": type || 'text/html'});
+                        res.write('This is not found');
+                        res.end()
+                    } else {
+                        fs.readFile(realPath, function(err, data) {
+                            if (err) {
+                                res.writeHead(500, {"Content-Type": type || 'text/html'});
+                                res.end(err.toString())
+                            } else {
+                                res.writeHead(200, {"Content-Type": type || 'text/html'});
+                                res.write(data)
+                                res.end()
+                            }
+                        })
+                    }
+                })
+            }
         })
         server.listen(port, host, function() {
             log('green', 'server has started')
