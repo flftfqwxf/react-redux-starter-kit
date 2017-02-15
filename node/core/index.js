@@ -79,7 +79,7 @@ class skyWeb {
                     this.params = params;
                     req.params = params;
                     route = item;
-                    if (req.method === 'PUT' || req.method === 'POST') {
+                    if (req.method !== 'GET') {
                         hasBody = true;
                         let body = '';
                         req.on('data', function(data) {
