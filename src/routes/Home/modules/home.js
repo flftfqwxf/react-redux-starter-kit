@@ -5,7 +5,7 @@ import axios from 'axios'
 export const LOAD_PROJECT_LIST = 'LOAD_PROJECT_LIST'
 export const DELETE_PROJECT = 'DELETE_PROJECT'
 // ------------------------------------
-// Actions
+// Actions 定义行为，及该行为相关的 state，type为行为名，其他字段为需要 state字段，用于存储数据，与vuex 初始化的state类似
 // ------------------------------------
 export function increment(value = []) {
     return {
