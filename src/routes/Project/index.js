@@ -16,6 +16,9 @@ export const addProject = (store)=>({
             cb(null, AddProject)
             /* Webpack named bundle   */
         }, 'home')
+    },
+    onLeave(){
+        store.dispatch({type: 'ADD_PROJECT'})
     }
 })
 export const editProject = (store)=>({
@@ -34,5 +37,8 @@ export const editProject = (store)=>({
             cb(null, AddProject)
             /* Webpack named bundle   */
         }, 'home')
+    },
+    onLeave(){
+        store.dispatch({type: 'ADD_PROJECT'})
     }
 })

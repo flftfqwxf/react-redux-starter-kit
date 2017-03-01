@@ -11,11 +11,11 @@ class AddProject extends React.Component {
     handleSubmit = (values) => {
         // Do something with the form values
         this.props.saveProjectInfo(values, function(data) {
-            if (data.code === 200) {
-                message.info('修改成功');
-            } else {
-                message.info(data.msg);
-            }
+            // if (data.code === 200) {
+            message.info(data.msg);
+            // } else {
+            //     message.info(data.msg);
+            // }
         });
         return false;
     }
@@ -40,6 +40,8 @@ class AddProject extends React.Component {
     componentWillMount() {
         if (this.props.params.project_id) {
             this.props.loadProjectInfo(this.props.params.project_id);
+        } else {
+            // this.props.cleanProjectInfo();
         }
     }
 }

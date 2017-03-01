@@ -1,5 +1,5 @@
 import {connect} from 'react-redux'
-import {increment, loadProjectList} from '../modules/home'
+import {increment, loadProjectList, deleteProjectInfo} from '../modules/home'
 /*  This is a container component. Notice it does not contain any JSX,
  nor does it import React. This component is **only** responsible for
  wiring in the actions and state necessary to render a presentational
@@ -10,7 +10,8 @@ import Home from '../components/HomeView'
  implementing our wrapper around increment; the component doesn't care   */
 const mapDispatchToProps = {
     increment: () => increment(1),
-    loadProjectList
+    loadProjectList,
+    deleteProjectInfo
 }
 const mapStateToProps = (state) => ({
     projectList: state.projectList

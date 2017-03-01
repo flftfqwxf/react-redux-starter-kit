@@ -49,10 +49,10 @@ const renderField = ({input, label, type, meta: {touched, error, warning}}) => (
 )
 const validate = values=> {
     const errors = {}
-    if (!values.get('project_name').trim()) {
+    if (!values.get('project_name')) {
         errors.project_name = '项目名称不能为空'
     }
-    if (values.get('proxy_url').trim() && !validator.isURL(values.get('proxy_url').toString().trim())) {
+    if (values.get('proxy_url') && !validator.isURL(values.get('proxy_url'))) {
         errors.proxy_url = '格式不正确'
     }
     return errors

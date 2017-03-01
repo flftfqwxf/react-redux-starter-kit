@@ -3,6 +3,7 @@ import axios from 'axios'
 // Constants
 // ------------------------------------
 export const LOAD_PROJECT_LIST = 'LOAD_PROJECT_LIST'
+export const DELETE_PROJECT = 'DELETE_PROJECT'
 // ------------------------------------
 // Actions
 // ------------------------------------
@@ -10,6 +11,12 @@ export function increment(value = []) {
     return {
         type: LOAD_PROJECT_LIST,
         payload: value
+    }
+}
+export function deleteAction(id = 0) {
+    return {
+        type: DELETE_PROJECT,
+        id: id
     }
 }
 /*  This is a thunk, meaning it is a function that immediately
@@ -28,15 +35,32 @@ export const loadProjectList = ()=> {
         })
     }
 }
+export const deleteProjectInfo = (projectId, callback)=> {
+    return (dispatch)=> {
+        let url = '/web/project/delete/' + projectId
+        axios.delete(url).then((data)=> {
+            if (data && data.data) {
+                callback(data.data);
+                dispatch(deleteAction(projectId))
+            }
+        })
+    }
+}
 export const actions = {
     increment,
-    loadProjectList
+    loadProjectList,
+    deleteProjectInfo
 }
 // ------------------------------------
-// Action Handlers
+// Action Handlers action 处理
 // ------------------------------------
 const ACTION_HANDLERS = {
-    [LOAD_PROJECT_LIST]: (state, action) => action.payload
+    [LOAD_PROJECT_LIST]: (state, action) => {
+        return action.payload
+    },
+    [DELETE_PROJECT]: (state, action) => {
+        return state.slice().filter(item=>item.project_id !== action.id)
+    },
 }
 // ------------------------------------
 // Reducer

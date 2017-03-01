@@ -1,5 +1,5 @@
 import React from 'react'
-import {Table} from 'antd'
+import {Table, message} from 'antd'
 import './HomeView.scss'
 import {IndexLink, Link} from 'react-router'
 class HomeView extends React.Component {
@@ -44,7 +44,7 @@ class HomeView extends React.Component {
                     title: '操作', dataIndex: '', render: (item) => {
                     return (
                         <span>
-                            <a href="javascript:;" onClick={this.props.delete}>删除</a>&nbsp;
+                            <a href="javascript:;" onClick={()=>this.delete(item.project_id)}>删除</a>&nbsp;
                             <Link to={{pathname: '/project/edit/' + item.project_id}} activeClassName='route--active'>
                                     修改
                                 </Link>&nbsp;
@@ -81,6 +81,12 @@ class HomeView extends React.Component {
         )
     }
 
+    delete(id, index) {
+        this.props.deleteProjectInfo(id, function(data) {
+            message.info(data.msg);
+        });
+    }
+
     componentWillMount() {
         this.props.loadProjectList();
     }
@@ -92,8 +98,10 @@ HomeView.propTypes = {
 HomeView.defaultProps = {
     columns: [],
     // project: dataSource
-    delete: function() {
-        alert(2)
+    delete: function(id) {
+        this.props.deleteProjectInfo(id, function(data) {
+            message.info(data.msg);
+        });
     },
     copy(){
     },
