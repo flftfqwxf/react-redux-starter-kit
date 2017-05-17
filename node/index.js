@@ -3,9 +3,11 @@ const skyWeb = require('./core/index');
 const nunjucks = require('nunjucks');
 const types = require('./core/mimetype').types;
 var mysql = require('promise-mysql');
+var child_process = require('child_process')
 let pool = mysql.createPool(config.mysql);
 const qs = require('qs');
 var debug = require('debug')('sql');
+let fs = require('fs')
 nunjucks.configure('./views', {
     autoescape: true
 });
@@ -23,24 +25,46 @@ skyWeb.post('/aaa', function(req, res) {
 })
 skyWeb.get('/web/project/info/:id', function(req, res) {
     // res.writeHead(200, {"Content-Type": types['json']});
-    pool.query('select * from mock_project where project_id=' + req.params.id).then(
-        (data)=> {
-            const json = JSON.stringify(data[0]);
-            res.write(json);
-            res.end();
-        }
-    ).catch((err)=> {
-        res.write(err.message);
-        res.end();
-    })
+    // fs.readFile('aa.txt', 'utf8', function(err, data) {
+    //     if (err) {
+    //         res.write(err.message);
+    //         res.end();
+    //     }
+    // })
+    // setTimeout(()=> {
+        throw new Error('this is error')
+    // }, 500)
+    // pool.query('select * from mock_project where project_id=' + req.params.id).then(
+    //     (data)=> {
+    //         const json = JSON.stringify(data[0]);
+    //         res.write(json);
+    //         res.end();
+    //     }
+    // ).catch((err)=> {
+    //     res.write(err.message);
+    //     res.end();
+    // })
 })
+function wait(millisec) {
+    var now = new Date;
+    while (new Date - now <= millisec) ;
+}
 skyWeb.get('/web/project_list', function(req, res) {
     // res.writeHead(200, {"Content-Type": types['json']});
     pool.query('select * from mock_project').then(
         (data)=> {
-            const json = JSON.stringify(data);
-            res.write(json);
-            res.end();
+            //settimeout只阻塞当前请求
+            setTimeout(()=> {
+                //此 wait会阻塞所有请求
+                // wait(5000)
+                //子过程中wait 只会阻塞当前请求，不会影响其他请求
+                var child = child_process.fork('./process/sub.js');
+                child.on('message', function(m) {
+                    const json = JSON.stringify(data[0]);
+                    res.write(json);
+                    res.end();
+                })
+            }, 5000)
         }
     ).catch((err)=> {
         res.write(err.message);

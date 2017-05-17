@@ -11,6 +11,7 @@ const response = require('./response');
 var pathToRegexp = require('path-to-regexp');
 var debug = require('debug')('sql');
 const qs = require('querystring');
+const domain = require('domain')
 class skyWeb {
     constructor() {
         this.methods = {};
@@ -50,91 +51,122 @@ class skyWeb {
         }
     }
 
+    wait(millisec) {
+        var now = new Date;
+        while (new Date - now <= millisec) ;
+    }
+
     listen(port, callback, host = '127.0.0.1') {
         const _this = this;
         // app.request = { __proto__: req, app: app };
         let server = http.createServer((req, res)=> {
-            const pathname = url.parse(req.url).pathname;
-            const routeList = this.routes[req.method.toLowerCase()]
-            let route
-            let params = {};
-            _this.body = [];
-            let hasBody = false;
-            const realPath = routes(req)
-            let ext = path.extname(pathname)
-            ext = ext ? ext.slice(1) : 'unknown';
-            const type = types[ext];
-            routeList.some((item, index)=> {
-                // console.log(route)
-                let m = item.regexp.exec(pathname)
-                if (m) {
-                    for (var i = 1; i < m.length; i++) {
-                        var key = item.keys[i - 1];
-                        var prop = key.name;
-                        var val = _this.decode_param(m[i]);
-                        if (val !== undefined || !(hasOwnProperty.call(params, prop))) {
-                            params[prop] = val;
-                        }
-                    }
-                    this.params = params;
-                    req.params = params;
-                    route = item;
-                    if (req.method !== 'GET') {
-                        hasBody = true;
-                        let body = '';
-                        req.on('data', function(data) {
-                            body += data;
-                            // Too much POST data, kill the connection!
-                            // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
-                            if (body.length > 1e6)
-                                req.connection.destroy();
-                        });
-                        req.on('end', function() {
-                            // req.body = qs.parse(body);
-                            req.body = body;
-                            if (route && route.callback) {
-                                res.writeHead(200, {"Content-Type": type || 'text/html'});
-                                // req.__proto__ = request;
-                                route.callback(req, res);
-                                // route.callback(Object.assign({}, req, request), res);
-                            }
-                            // use post['blah'], etc.
-                        });
-                    }
-                    return true;
-                }
+            let d = domain.create()
+            d.on('error', (error)=> {
+                console.log(error.message)
+                res.writeHead(200, {"Content-Type": 'text/html'});
+                res.write(error.message);
+                res.end()
             })
-            if (!hasBody) {
-                if (route && route.callback) {
-                    res.writeHead(200, {"Content-Type": type || 'text/html'});
-                    req.__proto__ = request;
-                    route.callback(req, res);
-                    // route.callback(Object.assign({}, req, request), res);
-                    return;
-                }
-                fs.exists(realPath, function(exists) {
-                    if (!exists) {
-                        res.writeHead(404, {"Content-Type": type || 'text/html'});
-                        res.write('This is not found');
-                        res.end()
-                    } else {
-                        fs.readFile(realPath, function(err, data) {
-                            if (err) {
-                                res.writeHead(500, {"Content-Type": type || 'text/html'});
-                                res.end(err.toString())
-                            } else {
-                                res.writeHead(200, {"Content-Type": type || 'text/html'});
-                                res.write(data)
-                                res.end()
+            d.add(res)
+            d.add(req)
+            d.run(function() {
+                handleRequest(req, res)
+            })
+            // console.log(req.url)
+            //
+            // if (req.url === '/') {
+            //     // console.log(req.url)
+            //     this.wait(5000)
+            // }
+            function handleRequest(req, res) {
+                const pathname = url.parse(req.url).pathname;
+                const routeList = _this.routes[req.method.toLowerCase()]
+                let route
+                let params = {};
+                _this.body = [];
+                let hasBody = false;
+                const realPath = routes(req)
+                let ext = path.extname(pathname)
+                ext = ext ? ext.slice(1) : 'unknown';
+                const type = types[ext];
+                routeList.some((item, index)=> {
+                    // console.log(route)
+                    let m = item.regexp.exec(pathname)
+                    if (m) {
+                        for (var i = 1; i < m.length; i++) {
+                            var key = item.keys[i - 1];
+                            var prop = key.name;
+                            var val = _this.decode_param(m[i]);
+                            if (val !== undefined || !(hasOwnProperty.call(params, prop))) {
+                                params[prop] = val;
                             }
-                        })
+                        }
+                        _this.params = params;
+                        req.params = params;
+                        route = item;
+                        if (req.method !== 'GET') {
+                            hasBody = true;
+                            let body = '';
+                            req.on('data', function(data) {
+                                body += data;
+                                // Too much POST data, kill the connection!
+                                // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+                                if (body.length > 1e6)
+                                    req.connection.destroy();
+                            });
+                            req.on('end', function() {
+                                // req.body = qs.parse(body);
+                                req.body = body;
+                                if (route && route.callback) {
+                                    res.writeHead(200, {"Content-Type": type || 'text/html'});
+                                    // req.__proto__ = request;
+                                    route.callback(req, res);
+                                    // route.callback(Object.assign({}, req, request), res);
+                                }
+                                // use post['blah'], etc.
+                            });
+                        }
+                        return true;
                     }
                 })
+                if (!hasBody) {
+                    if (route && route.callback) {
+                        res.writeHead(200, {"Content-Type": type || 'text/html'});
+                        req.__proto__ = request;
+                        route.callback(req, res);
+                        // route.callback(Object.assign({}, req, request), res);
+                        return;
+                    }
+                    fs.exists(realPath, function(exists) {
+                        if (!exists) {
+                            res.writeHead(404, {"Content-Type": type || 'text/html'});
+                            res.write('This is not found');
+                            res.end()
+                        } else {
+                            fs.readFile(realPath, function(err, data) {
+                                if (err) {
+                                    res.writeHead(500, {"Content-Type": type || 'text/html'});
+                                    res.end(err.toString())
+                                } else {
+                                    res.writeHead(200, {"Content-Type": type || 'text/html'});
+                                    res.write(data)
+                                    res.end()
+                                }
+                            })
+                        }
+                    })
+                }
             }
         })
         server.listen(port, host, function() {
             log('green', 'server has started')
             log('green', 'http://' + host + ':' + port)
+            // process.on('uncaughtException', function(err) {
+            //     _this.res.writeHead(200, {"Content-Type": 'text/html'});
+            //     _this.res.write(err.message)
+            //     _this.res.end()
+            //     console.log(err.message);
+            // });
             callback();
         });
     }
